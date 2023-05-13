@@ -2,102 +2,101 @@
 #include "fun.h"
 #include <string>
 #include <cmath>
+#include <iostream>
+#include <cstring>
+#include <cctype>
 
 unsigned int faStr1(const char *str) {
-        bool space = true;
-        int res = 0;
-        int i = 0;
-        bool no_digit = true;
-        while (str[i] != '\0') {
-                if (str[i] == ' ') {
-                        i++;
-                        no_digit = true;
-                        space = true;
-                        continue;
-                } else {
-                        if (space) {
-                                space = false;
-                                if (isdigit(str[i])) {
-                                        no_digit = false;
-                                } else {
-                                        if (no_digit) {
-                                                res += 1;
-                                        }
-                                }
-                        } else {
-                                if (isdigit(str[i]) && no_digit) {
-                                        res -= 1;
-                                        no_digit = false;
-                                }
-                        }
-                        i++;
-                }
+    unsigned int res = 0;
+    int i = 0;
+    while (str[i]) {
+        while (isspace(str[i])) {
+            i++;
         }
-        return res;
+        if (!str[i]) {
+            break;
+        }
+        bool is_word = true;
+        while (str[i] && !isspace(str[i])) {
+            if (isdigit(str[i])) {
+                is_word = false;
+                break;
+            }
+            i++;
+        }
+        if (is_word) {
+            res++;
+        }
+    }
+    return res;
 }
 
 unsigned int faStr2(const char *str) {
-        int res = 0;
-        bool space = true;
-        bool no_upper = true;
-        int i = 0;
-        while (str[i] != '\0') {
-                if (str[i] == ' ') {
-                        i++;
-                        space = true;
-                        no_upper = true;
-                        continue;
-                } else {
-                        if (space) {
-                                space = false;
-                                if (isupper(str[i])) {
-                                        res += 1;
-                                } else {
-                                        no_upper = false;
-                                }
-                        } else {
-                                if (isupper(str[i]) || (!isalnum(str[i]))) {
-                                    if (no_upper) {
-                                            res -= 1;
-                                            no_upper = false;
-                                    }
-                                }
-                        }
-                        i++;
-                }
+    unsigned int res = 0;
+    int i = 0;
+    while (str[i]) {
+        while (isspace(str[i])) {
+            i++;
         }
-        return res;
+        if (!str[i]) {
+            break;
+        }
+        bool is_word = true;
+        bool first_letter_uppercase = false;
+        while (str[i] && !isspace(str[i])) {
+            if (isalpha(str[i])) {
+                if (isupper(str[i])) {
+                    if (!first_letter_uppercase) {
+                        first_letter_uppercase = true;
+                    } else {
+                        is_word = false;
+                        break;
+                    }
+                } else if (!islower(str[i])) {
+                    is_word = false;
+                    break;
+                }
+            } else {
+                is_word = false;
+                break;
+            }
+            i++;
+        }
+        if (is_word && first_letter_uppercase) {
+            res++;
+        }
+    }
+    return res;
 }
 
 unsigned int faStr3(const char *str) {
-        double res = 0;
-        int quantity = 0;
-        int sum = 0;
-        bool space = true;
-        bool is_litera = true;
-        int i = 0;
-        while (str[i] != '\0') {
-                if (str[i] == ' ') {
-                        i++;
-                        space = true;
-                        is_litera = false;
-                        continue;
-                } else {
-                        if (space) {
-                                quantity += 1;
-                                space = false;
-                                is_litera = true;
-                        }
-                        if (is_litera) {
-                                sum += 1;
-                        }
-                        i++;
-                }
+    unsigned int res = 0;
+    unsigned int len_sum = 0;
+    int i = 0;
+    while (str[i]) {
+        while (isspace(str[i])) {
+            i++;
         }
-        if (quantity == 0 || sum == 0) {
-                return 0;
-        } else {
-                res = static_cast<int>(sum / quantity);
-                return res;
+        if (!str[i]) {
+            break;
         }
+        bool is_word = true;
+        unsigned int len = 0;
+        while (str[i] && !isspace(str[i])) {
+            if (isalpha(str[i])) {
+                len++;
+            } else {
+                is_word = false;
+                break;
+            }
+            i++;
+        }
+        if (is_word) {
+            res++;
+            len_sum += len;
+        }
+    }
+    double sred_len = static_cast<double>(len_sum) / res;
+    unsigned int rounded_sred_len = static_cast<unsigned int>(round(sred_len));
+    return rounded_sred_len;
 }
