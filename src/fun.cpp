@@ -1,83 +1,69 @@
 // Copyright 2022 UNN-IASR
 #include "fun.h"
-#include <string>
-#include <cmath>
-#include <iostream>
-#include <cstring>
-#include <cctype>
+#include <ctype.h>
 
 unsigned int faStr1(const char *str) {
-    int res = 0;
-    bool hasDigits = false;
-    
-    for (int i = 0; str[i] != '\0'; i++) {
-        if (isdigit(str[i])) {
-            hasDigits = true;
-        } else if (isspace(str[i])) {
-            if (!hasDigits) {
-                res++;
+    unsigned int count = 0;
+    bool isWord = false;
+    bool containsDigit = false;
+
+    for (int i = 0; str[i] != '\0'; ++i) {
+        if (!isspace(str[i])) {
+            isWord = true;
+            if (isdigit(str[i])) {
+                containsDigit = true;
             }
-            hasDigits = false;
+        } else {
+            if (isWord && !containsDigit) {
+                count++;
+            }
+            isWord = false;
+            containsDigit = false;
         }
     }
-    
-    if (!hasDigits) {
-        res++;
+
+    if (isWord && !containsDigit) {
+        count++;
     }
-    
-    return res;
+    return count;
 }
 
 unsigned int faStr2(const char *str) {
-    int res = 0;
-    bool isValidWord = false;
-    
-    for (int i = 0; str[i] != '\0'; i++) {
-        if (isupper(str[i])) {
-            isValidWord = true;
-            continue;
-        } else if (!islower(str[i]) && !isspace(str[i])) {
-            isValidWord = false;
+  int count = 0;
+  bool flag = true;
+  for (int i = 0; i < strlen(str) + 1; i++) {
+    flag = true;
+    if ((str[i - 1] == ' ' || i == 0) && (str[i] >= 'A' && str[i] <= 'Z')) {
+      i++;
+      while (str[i] != ' ' && str[i] != '\0') {
+        if (!(str[i] >= 'a' && str[i] <= 'z')) {
+          flag = false;
         }
-        
-        if (isspace(str[i]) && isValidWord) {
-            res++;
-            isValidWord = false;
-        }
+        i++;
+      }
+      if (flag) {
+        count++;
+      }
     }
-    
-    if (isValidWord) {
-        res++;
-    }
-    
-    return res;
+  }
+  return count;
 }
 
 unsigned int faStr3(const char *str) {
-    int res = 0;
-    int length = 0;
-    int wordCount = 0;
-
-    for (int i = 0; str[i] != '\0'; i++) {
-        if (isspace(str[i])) {
-            if (length > 0) {
-                res += length;
-                length = 0;
-                wordCount++;
-            }
-        } else {
-            length++;
-        }
+  int countWord = 0;
+  int countLetters = 0;
+  bool isWord = false;
+  while (*str) {
+    if (*str != ' ' && isWord == false) {
+      countWord++;
+      countLetters++;
+      isWord = true;
+    } else if (*str != ' ') {
+      countLetters++;
+    } else if (*str == ' ' && isWord == true) {
+      isWord = false;
     }
-
-    if (length > 0) {
-        res += length;
-        wordCount++;
-    }
-
-    if (wordCount == 0) {
-        return 0;
-    }
-
-    return static_cast<unsigned int>(std::round(static_cast<double>(res) / wordCount));
+    ++str;
+  }
+  return (countLetters/countWord);
 }
