@@ -7,96 +7,77 @@
 #include <cctype>
 
 unsigned int faStr1(const char *str) {
-    unsigned int res = 0;
-    int i = 0;
-    while (str[i]) {
-        while (isspace(str[i])) {
-            i++;
-        }
-        if (!str[i]) {
-            break;
-        }
-        bool is_word = true;
-        while (str[i] && !isspace(str[i])) {
-            if (isdigit(str[i])) {
-                is_word = false;
-                break;
+    int res = 0;
+    bool hasDigits = false;
+    
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (isdigit(str[i])) {
+            hasDigits = true;
+        } else if (isspace(str[i])) {
+            if (!hasDigits) {
+                res++;
             }
-            i++;
-        }
-        if (is_word) {
-            res++;
+            hasDigits = false;
         }
     }
+    
+    if (!hasDigits) {
+        res++;
+    }
+    
     return res;
 }
 
 unsigned int faStr2(const char *str) {
-    unsigned int res = 0;
-    int i = 0;
-    while (str[i]) {
-        while (isspace(str[i])) {
-            i++;
+    int res = 0;
+    bool isValidWord = false;
+    
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (isupper(str[i])) {
+            isValidWord = true;
+            continue;
+        } else if (!islower(str[i]) && !isspace(str[i])) {
+            isValidWord = false;
         }
-        if (!str[i]) {
-            break;
-        }
-        bool is_word = true;
-        bool first_letter_uppercase = false;
-        while (str[i] && !isspace(str[i])) {
-            if (isalpha(str[i])) {
-                if (isupper(str[i])) {
-                    if (!first_letter_uppercase) {
-                        first_letter_uppercase = true;
-                    } else {
-                        is_word = false;
-                        break;
-                    }
-                } else if (!islower(str[i])) {
-                    is_word = false;
-                    break;
-                }
-            } else {
-                is_word = false;
-                break;
-            }
-            i++;
-        }
-        if (is_word && first_letter_uppercase) {
+        
+        if (isspace(str[i]) && isValidWord) {
             res++;
+            isValidWord = false;
         }
     }
+    
+    if (isValidWord) {
+        res++;
+    }
+    
     return res;
 }
 
 unsigned int faStr3(const char *str) {
-    unsigned int res = 0;
-    unsigned int len_sum = 0;
-    int i = 0;
-    while (str[i]) {
-        while (isspace(str[i])) {
-            i++;
-        }
-        if (!str[i]) {
-            break;
-        }
-        bool is_word = true;
-        unsigned int len = 0;
-        while (str[i] && !isspace(str[i])) {
-            if (isalpha(str[i])) {
-                len++;
-            } else {
-                is_word = false;
-                break;
+    int res = 0;
+    int length = 0;
+    int wordCount = 0;
+
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (isspace(str[i])) {
+            if (length > 0) {
+                res += length;
+                length = 0;
+                wordCount++;
             }
-            i++;
-        }
-        if (is_word) {
-            res++;
-            len_sum += len;
+        } else {
+            length++;
         }
     }
-    double sred_len = static_cast<double>(len_sum) / res;
-    unsigned int rounded_sred_len = static_cast<unsigned int>(round(sred_len));
-    return rounded_sred_len;
+
+    if (length > 0) {
+        res += length;
+        wordCount++;
+    }
+
+    if (wordCount == 0) {
+        return 0;
+    }
+
+    return static_cast<unsigned int>(std::round(static_cast<double>(res) / wordCount));
 }
